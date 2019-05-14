@@ -65,7 +65,7 @@ UserSchema.statics.findOrCreateOAuthUser = function(profile, done){
 	// Search for a profile from the given auth origin
 	User.findOne(query, function(err, user){
 		if(err) throw err;
-
+        //  console.log(user)
 		// If a user is returned, load the given user
 		if(user){
 			done(null, user);
@@ -75,6 +75,8 @@ UserSchema.statics.findOrCreateOAuthUser = function(profile, done){
 				if(err) throw err;
 
 				if(user){
+					// console.log(user)
+
 					// Preexistent e-mail, update
 					user[''+profile.authOrigin] = {};
 					user[''+profile.authOrigin].id = profile.id;
@@ -116,3 +118,5 @@ UserSchema.statics.findOrCreateOAuthUser = function(profile, done){
 
 var User = mongoose.model("User", UserSchema);
 module.exports = User;
+
+

@@ -9,12 +9,21 @@ var express = require('express'),
   mongoose = require('mongoose'),
   passport = require("passport"),
   flash = require("connect-flash");
+const morgan = require('morgan')
 
 var env = process.env.NODE_ENV || 'development',
   config = require('./config/config')[env];
+//Configure mongoose's promise to global promise
+mongoose.Promise = global.Promise;
+// mongoose.promise = global.Promise;
+console.log(config.db)
+mongoose.connect(config.db)
+.then((r)=>console.log("connection maded"))
+.catch((e) => {
+//   throw e;
+console.log(e)
+});
 
-
-mongoose.connect(config.db);
 
 var models_dir = __dirname + '/app/models';
 fs.readdirSync(models_dir).forEach(function (file) {
@@ -31,14 +40,12 @@ app.configure(function () {
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/app/views');
   app.set('view engine', 'jade');
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
+  app.use(morgan('dev'))
   app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.session({ secret: 'keyboard cat' }));
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(express.methodOverride());
   app.use(flash());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
@@ -73,3 +80,4 @@ require('./config/routes')(app, passport);
 http.createServer(app).listen(app.get('port'), function () {
     console.log("Express server listening on port " + app.get('port'));
 });
+

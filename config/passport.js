@@ -1,8 +1,12 @@
+ 
+
+const LocalStrategy = require('passport-local').Strategy
 var mongoose = require('mongoose')
-  , LocalStrategy = require('passport-local').Strategy
-  , FacebookStrategy = require('passport-facebook').Strategy
-  , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
-  , User = mongoose.model('User');
+const FacebookStrategy = require('passport-facebook').Strategy
+const  GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+const  User = mongoose.model('User');
+  // , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 
 
 module.exports = function (passport, config) {
@@ -43,10 +47,18 @@ module.exports = function (passport, config) {
 	    callbackURL: config.google.callbackURL
 	  },
 	  function(accessToken, refreshToken, profile, done) {
-	  	profile.authOrigin = 'google';
-	    User.findOrCreateOAuthUser(profile, function (err, user) {
-	      return done(err, user);
-	    });
+			console.log(accessToken);
+	console.log(refreshToken);
+	console.log(profile);
+
+	// const [first,second ] = profile.photos;
+	// console.log(first,second, profile.authOrigin)
+	
+	profile.authOrigin = 'google';
+	User.findOrCreateOAuthUser(profile, function (err, user) {
+						console.log(">>>>user", user)
+						return done(null, user);
+				});
 	  }
 	));
 }
